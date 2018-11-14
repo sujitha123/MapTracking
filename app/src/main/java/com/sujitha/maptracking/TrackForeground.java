@@ -93,9 +93,9 @@ public class TrackForeground extends Service {
         ////////////////////////////////////////////////////////
         locationRequest = new LocationRequest();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10 * 1000);
-        locationRequest.setFastestInterval(10 * 1000);
-        locationRequest.setSmallestDisplacement(10);
+        locationRequest.setInterval(5 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        locationRequest.setSmallestDisplacement(1);
         startLocationReq();
     }
 
@@ -131,7 +131,7 @@ public class TrackForeground extends Service {
                     UserLocDataModel(location.getLongitude() + ""
                     , location.getLatitude() + "", getCurrentTimeDate()));
             if (checkValue != -1) {
-                Toast.makeText(context, "New Added", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "New Location Added", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent("update_map_broad_cast");
                 sendBroadcast(intent);
             }
@@ -177,10 +177,13 @@ public class TrackForeground extends Service {
         }
         Bitmap logoBitmapIcon = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher);
         Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "NOTIFICATION_CHANNEL_ID_OF_TRACK_NOTIFICATION");
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setContentTitle("" + getString(R.string.app_name));
         builder.setLargeIcon(logoBitmapIcon);
+        builder.setContentIntent(pendingIntent);
         builder.setTicker("Tracking Started");
         builder.setContentText("Tracking Started . . .");
         builder.setPriority(PRIORITY_HIGH);

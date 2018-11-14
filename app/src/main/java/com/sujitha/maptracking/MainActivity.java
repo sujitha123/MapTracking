@@ -38,12 +38,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!isCheckLocationPermission()) {
-            requestLocationPermission();
-        } else {
-            checkMapAndService();
-        }
-        addingListView();
     }
 
     void checkMapAndService() {
@@ -77,8 +71,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
 
-        checkMapAndService();
-        addingListView();
+        if (!isCheckLocationPermission()) {
+            requestLocationPermission();
+        } else {
+            checkMapAndService();
+            addingListView();
+        }
+
     }
 
     public static boolean isServiceRunning(Context context, String classPath) {
@@ -139,15 +138,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Marker marker : markers) {
-                    builder.include(marker.getPosition());
+                if (markers.size() > 0) {
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    for (Marker marker : markers) {
+                        builder.include(marker.getPosition());
+                    }
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 10);
+                    googleMapGlobal.animateCamera(cu);
+
                 }
-                LatLngBounds bounds = builder.build();
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 10);
-                googleMapGlobal.animateCamera(cu);
             }
-        }, 3000);
+        }, 2000);
 
     }
 
